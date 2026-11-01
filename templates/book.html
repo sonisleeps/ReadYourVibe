@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} - ReadYourVibe{% endblock %}
+{% block content %}
+
+<div class="detail">
+  <div>
+    {% if info.cover or book.cover %}
+      <img class="cover" src="{{ info.cover or book.cover }}" alt="Cover of {{ book.title }}"
+           onerror="this.style.display='none'">
+    {% else %}
+      <div class="nocover">No cover found</div>
+    {% endif %}
+  </div>
+
+  <div>
+    <h1>{{ book.title }}</h1>
+    <div class="by" style="color:var(--muted)">by {{ book.author }}</div>
+    <div class="big-rating">&#9733; {{ book.rating }} / 5
+      {% if book.ratings_count %}<small style="color:var(--muted);font-size:.9rem">({{ book.ratings_count }} ratings)</small>{% endif %}
+    </div>
+
+    <div class="chips">
+      {% if book.genre != 'Unknown' %}<span class="chip">{{ book.genre }}</span>{% endif %}
+      <span class="chip">Published {{ book.year }}</span>
+      {% if info.pages %}<span class="chip">{{ info.pages }} pages</span>{% endif %}
+      {% if book.isbn %}<span class="chip">ISBN {{ book.isbn }}</span>{% endif %}
+    </div>
+
+    <div class="box">
+      <h4>About this book</h4>
+      {% if info.description %}{{ info.description }}
+      {% else %}<span style="color:var(--muted)">No description available from Open Library for this book.</span>{% endif %}
+    </div>
+
+    {% if info.subjects %}
+    <div class="box">
+      <h4>Vibes &amp; subjects</h4>
+      <div class="chips" style="margin:0">
+        {% for s in info.subjects %}<span class="chip">{{ s }}</span>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="actions">
+      <a class="btn amber" href="/?search={{ book.author|urlencode }}">More by this author</a>
+      <a class="btn ghost" href="/random">Surprise me</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
