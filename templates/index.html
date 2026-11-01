@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form class="filters" method="get" action="/">
+  <input type="hidden" name="search" value="{{ search }}">
+  <select name="min_rating">
+    {% for r in [0, 3.0, 3.5, 4.0, 4.3, 4.5] %}
+      <option value="{{ r }}" {% if r == min_rating %}selected{% endif %}>
+        {% if r == 0 %}Any rating{% else %}{{ r }}+ rating{% endif %}</option>
+    {% endfor %}
+  </select>
+  <select name="sort">
+    <option value="rating"  {% if sort_by == 'rating'  %}selected{% endif %}>Top rated</option>
+    <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>Most rated</option>
+    <option value="newest"  {% if sort_by == 'newest'  %}selected{% endif %}>Newest</option>
+    <option value="title"   {% if sort_by == 'title'   %}selected{% endif %}>Title A-Z</option>
+  </select>
+  <button class="btn" type="submit">Find books</button>
+  <button class="btn ghost" type="submit" formaction="/random">Surprise me</button>
+
+  {% if genres|length > 1 %}
+  <div class="pills">
+    {% for g in genres %}
+      <label><input type="checkbox" name="genre" value="{{ g }}" {% if g in selected_genres %}checked{% endif %}><span>{{ g }}</span></label>
+    {% endfor %}
+  </div>
+  {% endif %}
+</form>
+
+<h1 class="heading">{{ title }}
+  <small>{% if total > books|length %}(showing {{ books|length }} of {{ total }}){% else %}({{ total }}){% endif %}</small>
+</h1>
+
+<div class="grid">
+  {% for b in books %}
+    <a class="card" href="/book/{{ b.id }}" target="_blank">
+      <div class="cover-box">
+        {% if b.isbn or b.cover %}
+          <img src="https://covers.openlibrary.org/b/isbn/{{ b.isbn }}-M.jpg?default=false"
+               data-alt="{{ b.cover }}" alt="Cover of {{ b.title }}" onerror="coverFallback(this)">
+        {% endif %}
+      </div>
+      <h3>{{ b.title }}</h3>
+      <p class="by">by {{ b.author }} &middot; {{ b.year }}</p>
+      <div class="star">&#9733; {{ b.rating }}
+        {% if b.ratings_count %}<small>({{ b.ratings_count }})</small>{% endif %}</div>
+    </a>
+  {% else %}
+    <p class="empty">No books match these filters. Try a lower rating or clear the search.</p>
+  {% endfor %}
+</div>
+{% endblock %}
