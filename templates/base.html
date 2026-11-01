@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ReadYourVibe{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pixelify+Sans:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <canvas id="fireflies"></canvas>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="logo" href="/">ReadYourVibe<small>find a book for tonight</small></a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/random">Surprise me</a>
+        <a href="/?sort=rating&min_rating=4.3">Top rated</a>
+        <a href="/?sort=popular">Most loved</a>
+        <a href="/?sort=newest">Fresh off the shelf</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <form class="search" action="/" method="get">
+        <input type="text" name="search" placeholder="Search your favourite books or authors..." value="{{ search|default('') }}">
+        <button class="btn amber" type="submit">Search</button>
+      </form>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='fireflies.js') }}"></script>
+  <script>
+    // If a cover fails to load: try the backup link once, else hide the image
+    function coverFallback(img) {
+      if (!img.dataset.tried && img.dataset.alt) { img.dataset.tried = "1"; img.src = img.dataset.alt; }
+      else { img.style.visibility = "hidden"; }
+    }
+  </script>
+</body>
+</html>
